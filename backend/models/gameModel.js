@@ -26,4 +26,4 @@ const gameSchema = new Schema({
 })
 
 //Export
-module.exports = mongoose.model('gameModel', gameSchema)
+module.exports = mongoose.models.gameModel || mongoose.model('gameModel', gameSchema)

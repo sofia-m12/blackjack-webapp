@@ -20,4 +20,4 @@ const playerSchema = new Schema({
 })
 
 //Export
-module.exports = mongoose.model('playerModel', playerSchema)
+module.exports = mongoose.models.playerModel || mongoose.model('playerModel', playerSchema)
