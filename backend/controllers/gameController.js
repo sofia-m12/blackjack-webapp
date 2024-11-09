@@ -67,6 +67,22 @@ function createDeck() {
 };
 
 //Helper to calculate the score of a player's hand
+function calcScore(player) {
+    //Add up values of the player's hand
+    let score = 0
+    let hasAce = false
+    for(x in player.hand){
+        if(x.rank === 'A'){
+            hasAce = true
+        }
+        score += x
+    }
+    //If Ace puts player over 21, change to value of 1
+    if(hasAce && score > 21){
+        score -= 10
+    }
+    return score
+}
 
 module.exports = {
     getHome,
