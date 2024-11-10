@@ -27,7 +27,7 @@ const startGame = async (req, res) => {
         newGame.dealer.hand.push(drawCard(newGame))
         //wait for game to save to database
         await newGame.save()
-        res.status(200).json({mssg:'start game'})
+        res.status(200).json(newGame)
     }catch (error){
         console.error(error)
         res.status(400).json({mssg: 'some kind of err'})
@@ -37,6 +37,7 @@ const startGame = async (req, res) => {
 //Player chooses to hit(POST)
 const playHit = async (req, res) => {
     //fetch the game by its id(check for valid id)
+    const {id} = 
     //add card to player's hand
     //if player gets blackjack, update the winner, end game
     //if player busts, update winner, end game
@@ -69,11 +70,11 @@ function createDeck() {
     for (let x in ranks){
         for (let y in suits){
             const card = Card({
-                suit: y,
-                rank: x,
-                value: x === 'A' ? 11 : //If rank is A, set value to 11
-                isNaN(x) ? 10 :  //If rank if J, Q, K, set value to 10
-                parseInt(x) //Else, set value to rank number
+                suit: suits[y],
+                rank: ranks[x],
+                value: ranks[x] === 'A' ? 11 : //If rank is A, set value to 11
+                isNaN(ranks[x]) ? 10 :  //If rank if J, Q, K, set value to 10
+                parseInt(ranks[x]) //Else, set value to rank number
             })
             deck.push(card)   //Add card to the deck
         }
