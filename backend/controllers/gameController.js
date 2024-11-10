@@ -1,4 +1,4 @@
-//Import gameModel and mongoose library
+//Import gameModel, cardModel and mongoose library
 const Game = require('../models/GameModel.js')
 const Card = require('../models/cardModel.js')
 const mongoose = require('mongoose')
