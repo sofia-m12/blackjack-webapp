@@ -11,8 +11,27 @@ const getHome = async (req, res) => {
 
 //Create a new game(POST)
 const startGame = async (req, res) => {
-    res.status(200).json({mssg:'start game'})
-    //try catch: respond with good status & the Game
+    try{
+        //Create a shuffled deck
+        let newDeck = shuffle(createDeck())
+        //Create new Game, with player, hand
+        let newGame = new Game({
+            player: {name: 'player',hand: [], score: 0},
+            dealer: {name: 'dealer',hand: [], score: 0},
+            deck: newDeck
+        })
+        //Deal hands to both players
+        newGame.player.hand.push(drawCard(newGame))
+        newGame.dealer.hand.push(drawCard(newGame))
+        newGame.player.hand.push(drawCard(newGame))
+        newGame.dealer.hand.push(drawCard(newGame))
+        //wait for game to save to database
+        await newGame.save()
+        res.status(200).json({mssg:'start game'})
+    }catch (error){
+        console.error(error)
+        res.status(400).json({mssg: 'some kind of err'})
+    }
 }
 
 //Player chooses to hit(POST)
@@ -64,8 +83,9 @@ function createDeck() {
 
 //Helper to shuffle a deck of cards
 function shuffle(deck) {
+    let temp = 0
     for(let i = 0;i < deck.length; i++){
-        let temp = Math.floor(Math.random() * (deck.length))
+        temp = Math.floor(Math.random() * deck.length)
         [deck[i], deck[temp]] = [deck[temp], deck[i]]
     }
     return deck
