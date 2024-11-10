@@ -20,8 +20,7 @@ const gameSchema = new Schema({
         required: true
     },
     win: {
-        type: String,
-        required: true
+        type: String
     }
 })
 
