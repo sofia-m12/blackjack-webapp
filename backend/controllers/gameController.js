@@ -11,12 +11,8 @@ const getHome = async (req, res) => {
 
 //Create a new game(POST)
 const startGame = async (req, res) => {
-    //create deck
-    //Shuffle deck
-    //create new Game, with player, hand
-    //wait for game to save to database
-    //try catch: respond with good status & the Game
     res.status(200).json({mssg:'start game'})
+    //try catch: respond with good status & the Game
 }
 
 //Player chooses to hit(POST)
@@ -65,6 +61,15 @@ function createDeck() {
     }
     return deck
 };
+
+//Helper to shuffle a deck of cards
+function shuffle(deck) {
+    for(let i = 0;i < deck.length; i++){
+        let temp = Math.floor(Math.random() * (deck.length))
+        [deck[i], deck[temp]] = [deck[temp], deck[i]]
+    }
+    return deck
+}
 
 //Helper to calculate the score of a player's hand
 function calcScore(player) {
