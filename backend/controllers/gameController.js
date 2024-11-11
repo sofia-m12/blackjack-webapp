@@ -37,8 +37,12 @@ const startGame = async (req, res) => {
 //Player chooses to hit(POST)
 const playHit = async (req, res) => {
     //fetch the game by its id(check for valid id)
-    const {id} = 
-    //add card to player's hand
+    const {id} = req.params
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(400).json({error: 'Error: no such game'})
+    }
+    //add card to player's hand,calculate score
+
     //if player gets blackjack, update the winner, end game
     //if player busts, update winner, end game
     res.status(200).json({mssg:'play out a hit'})

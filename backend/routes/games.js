@@ -15,10 +15,10 @@ router.get('/', getHome)
 router.post('/start', startGame)
 
 //Update game to simulate player hit
-router.post('/hit', playHit)
+router.post('/hit/:id', playHit)
 
 //Update game to simulate player stand
-router.post('/stand', playStand)
+router.post('/stand/:id', playStand)
 
 //Export the router
 module.exports = router
