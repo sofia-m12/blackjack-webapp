@@ -27,10 +27,10 @@ const startGame = async (req, res) => {
         newGame.dealer.hand.push(drawCard(newGame))
         //wait for game to save to database
         await newGame.save()
-        res.status(200).json(newGame)
+        res.status(200).json({game: newGame, gameId: newGame._id})
     }catch (error){
         console.error(error)
-        res.status(400).json({mssg: 'some kind of err'})
+        res.status(400).json({mssg: 'Error: game not started'})
     }
 }
 
@@ -41,11 +41,13 @@ const playHit = async (req, res) => {
     if(!mongoose.Types.ObjectId.isValid(id)){
         return res.status(400).json({error: 'Error: no such game'})
     }
+    const game = await Game.findById(id)
+    game.player.score = calcScore(game.player)//testing calcScore
     //add card to player's hand,calculate score
 
     //if player gets blackjack, update the winner, end game
     //if player busts, update winner, end game
-    res.status(200).json({mssg:'play out a hit'})
+    res.status(200).json(game)
 }
 
 //Player chooses to stand(POST)
@@ -86,11 +88,11 @@ function createDeck() {
     return deck
 };
 
-//Helper to shuffle a deck of cards
+//Helper to shuffle a deck of cards, Fisher-yates algorithm
 function shuffle(deck) {
-    let temp = 0
-    for(let i = 0;i < deck.length; i++){
-        temp = Math.floor(Math.random() * deck.length)
+    let temp
+    for(let i = deck.length - 1;i > 0;i--){
+        temp = Math.floor(Math.random() * (i+1))
         [deck[i], deck[temp]] = [deck[temp], deck[i]]
     }
     return deck
@@ -101,11 +103,11 @@ function calcScore(player) {
     //Add up values of the player's hand
     let score = 0
     let hasAce = false
-    for(x in player.hand){
+    for(x of player.hand){
         if(x.rank === 'A'){
             hasAce = true
         }
-        score += x
+        score += x.value
     }
     //If Ace puts player over 21, change to value of 1
     if(hasAce && score > 21){
