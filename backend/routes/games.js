@@ -3,7 +3,8 @@ const {
     getHome,
     startGame,
     playHit,
-    playStand
+    playStand,
+    gameEnd
 } = require('../controllers/gameController')
 
 const router = express.Router()
@@ -19,6 +20,9 @@ router.post('/hit/:id', playHit)
 
 //Update game to simulate player stand
 router.post('/stand/:id', playStand)
+
+router.get('/end', gameEnd)
+///:id
 
 //Export the router
 module.exports = router

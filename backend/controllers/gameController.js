@@ -61,6 +61,7 @@ const playHit = async (req, res) => {
     // If player busts, update winner, end game
     if(game.player.score > 21){
         game.win = 'Dealer'
+        //this.gameEnd()
     }
     
     res.status(200).json(game)
@@ -80,6 +81,13 @@ const playStand = async (req, res) => {
 //Helper to draw a card from a deck
 function drawCard(game){
     return game.deck.pop()
+}
+
+//Display Game over(GET)
+const gameEnd = async (req, res) => {
+    //fetch game by id
+    //display a game over, with the winner
+    res.status(200).json({mssg:'end game'})
 }
 
 //Helper to create a new deck of cards
@@ -136,5 +144,6 @@ module.exports = {
     getHome,
     startGame,
     playHit,
-    playStand
+    playStand,
+    gameEnd
 }
