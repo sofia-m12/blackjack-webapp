@@ -54,14 +54,17 @@ const playHit = async (req, res) => {
 
     game.player.hand.push(drawCard(game)) //draw a card
     game.player.score = calcScore(game.player)  //calculate player score
-    // If player gets blackjack, call playStand(dealer's turn), end game
-    if(game.player.score === 21){
-        this.playStand()
-    }
+
     // If player busts, update winner, end game
     if(game.player.score > 21){
         game.win = 'Dealer'
-        //this.gameEnd()
+        await game.save()                    //save game to database
+        this.gameEnd()
+    }
+    if(game.player.score === 21){
+        // If player has blackjack, go to dealer's turn
+        await game.save()                    //save game to database
+        this.playStand()
     }
     
     res.status(200).json(game)
@@ -69,11 +72,36 @@ const playHit = async (req, res) => {
 
 //Player chooses to stand(POST)
 const playStand = async (req, res) => {
-    //fetch the game by its id(check for valid id)
-    //add cards to dealers hand until score < 17
-    //if dealer gets blackjack, update the winner, end game
-    //if player busts, update winner, end game
-    //calculate + compare scores, set the winner
+    // Fetch the game by its id(check for valid id)
+    const {id} = req.params
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(400).json({error: 'Error: no such game'})
+    }
+    const game = await Game.findById(id)
+
+    // Add cards to dealers hand until score >= 17
+    while(game.dealer.score < 17){
+        game.dealer.hand.push(drawCard(game))       //draw a card
+        game.dealer.score = calcScore(game.dealer)  //calculate player score
+    }
+    // If player & dealer have same score, its a tie
+    if(game.player.score === game.dealer.score){
+        game.win = 'tie'
+        this.gameEnd()
+    }
+    // If dealer gets blackjack, update the winner, end game
+    if(game.dealer.score === 21){
+        game.win = 'Dealer'
+        this.gameEnd()
+    }
+    // Else compare the scores
+    if(game.player.score > game.dealer.score){
+        game.win = 'Player'
+    }else{
+        game.win = 'Dealer'
+    }
+    this.gameEnd()
+
     //save game to database
     //respond with good status and the updated Game
     res.status(200).json({mssg:'play out a stand'})
@@ -85,8 +113,15 @@ function drawCard(game){
 
 //Display Game over(GET)
 const gameEnd = async (req, res) => {
-    //fetch game by id
+    // Fetch game by id
+    const {id} = req.params
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(400).json({error: 'Error: no such game'})
+    }
+    const game = await Game.findById(id)
+    
     //display a game over, with the winner
+    //handle a tie
     res.status(200).json({mssg:'end game'})
 }
 
