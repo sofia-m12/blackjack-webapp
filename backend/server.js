@@ -8,7 +8,7 @@ const gameRoutes = require('./routes/games.js')
 app.use(express.json());
 app.use('/api/game', gameRoutes)
 
-//Connect to MongoDB
+//Connect to MongoDB database/cluster!
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     //Listener

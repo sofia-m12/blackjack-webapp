@@ -12,7 +12,7 @@ const router = express.Router()
 router.get('/', getHome)
 
 //Create/start a new game
-router.post('/start', startGame)
+router.get('/start', startGame)
 
 //Update game to simulate player hit
 router.post('/hit/:id', playHit)
