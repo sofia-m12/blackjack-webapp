@@ -68,7 +68,8 @@ const playHit = async (req, res) => {
             //gameEnd()
         }else if(game.player.score === 21){// If player has blackjack, go to dealer's turn
             await game.save()                    //save game to database
-            this.playStand()
+            playStand()
+            return
         }else{
             await game.save()                   //save game to database
             res.status(200).json(game)
@@ -105,7 +106,7 @@ const playStand = async (req, res) => {
         }
 
         await game.save()      //save game to database
-        await gameEnd()        //end the game
+       //await gameEnd()        //end the game
 
         //respond with good status and the updated Game
         res.status(200).json(game)
