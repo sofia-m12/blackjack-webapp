@@ -120,8 +120,31 @@ const playStand = async (req, res) => {
     }
 }
 
+const deleteGame = async (req, res) => {
+    try{
+        // Fetch the game by its id(check for valid id)
+        const {id} = req.params
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(400).json({error: 'Error: invalid id'})
+        }
+        const game = await Game.findByIdAndDelete(id)
 
-//Display Game over(GET)
+        if(!game){
+            return res.status(404).json({ error: 'Game not found' });
+        }
+
+        //Respond with successful deletion
+        res.status(200).json({mssg: 'Deleted successfully', game})
+
+    }catch(error){
+        console.error(error)
+        res.status(500).json({error: 'Internal server error'})
+    }
+    
+}
+
+
+//Helper that determines the winning message
 const gameEnd = (game) => {
     if(game.win === 'tie'){
         return 'Its a tie'
@@ -192,5 +215,6 @@ module.exports = {
     getHome,
     startGame,
     playHit,
-    playStand
+    playStand, 
+    deleteGame
 }
