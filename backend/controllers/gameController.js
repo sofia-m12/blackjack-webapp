@@ -65,11 +65,13 @@ const playHit = async (req, res) => {
         if(game.player.score > 21){
             game.win = 'Dealer'
             await game.save()                    //save game to database
-            //gameEnd()
-        }else if(game.player.score === 21){// If player has blackjack, go to dealer's turn
+            const message = gameEnd(game)        //determine winner message
+            return res.status(200).json({game, message});
+        }
+
+        if(game.player.score === 21){// If player has blackjack, go to dealer's turn
             await game.save()                    //save game to database
-            playStand()
-            return
+            return res.status(200).json({game, message: '21! Dealers turn.'});
         }else{
             await game.save()                   //save game to database
             res.status(200).json(game)
@@ -118,24 +120,19 @@ const playStand = async (req, res) => {
 
 
 //Display Game over(GET)
-const gameEnd = async (req, res) => {
-    try{
-        // Fetch game by id
-    const {id} = req.params
-    if(!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(400).json({error: 'Error: no such game'})
+const gameEnd = (game) => {
+    if(game.win === 'tie'){
+        return 'Its a tie'
     }
-    const game = await Game.findById(id)
-    
-    res.status(200).json({mssg:'Game over', game})
-    }catch(error){
-        console.error(error)
-        res.status(400).json({mssg: 'Unable to end game'})
-    }
+    return game.win + ' wins!'
 }
 
 //Helper to draw a card from a deck
 function drawCard(game){
+    //Throws error if deck is empty
+    if(!game.deck || game.deck.length === 0){
+        throw new Error('The deck is empty. Cannot draw a card.');
+    }
     return game.deck.pop()
 }
 
