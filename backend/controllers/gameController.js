@@ -65,8 +65,8 @@ const playHit = async (req, res) => {
         if(game.player.score > 21){
             game.win = 'Dealer'
             await game.save()                    //save game to database
-            const message = gameEnd(game)        //determine winner message
-            return res.status(200).json({game, mssg});
+            const winMessage = gameEnd(game)        //determine winner message
+            return res.status(200).json({game, winMessage});
         }
 
         // If player has blackjack, go to dealer's turn
@@ -111,8 +111,8 @@ const playStand = async (req, res) => {
 
         // Respond with ok status and the updated Game & winner
         await game.save()      //save game to database
-        const message = gameEnd(game)        //determine winner message
-        return res.status(200).json({game, message})
+        const winMessage = gameEnd(game)        //determine winner message
+        return res.status(200).json({game, winMessage})
 
     } catch(error){
         console.error(error)
