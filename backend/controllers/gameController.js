@@ -192,6 +192,5 @@ module.exports = {
     getHome,
     startGame,
     playHit,
-    playStand,
-    gameEnd
+    playStand
 }
