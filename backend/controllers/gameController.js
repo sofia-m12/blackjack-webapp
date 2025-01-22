@@ -66,16 +66,18 @@ const playHit = async (req, res) => {
             game.win = 'Dealer'
             await game.save()                    //save game to database
             const message = gameEnd(game)        //determine winner message
-            return res.status(200).json({game, message});
+            return res.status(200).json({game, mssg});
         }
 
-        if(game.player.score === 21){// If player has blackjack, go to dealer's turn
+        // If player has blackjack, go to dealer's turn
+        if(game.player.score === 21){
             await game.save()                    //save game to database
-            return res.status(200).json({game, message: '21! Dealers turn.'});
-        }else{
-            await game.save()                   //save game to database
-            res.status(200).json(game)
+            return res.status(200).json({game, mssg: '21! Dealers turn.'});
         }
+
+        await game.save()                   //save game to database
+        res.status(200).json(game)
+
     } catch(error){
         console.error(error)
         res.status(400).json({mssg: 'Unable to play hit', error: error.message})
@@ -107,11 +109,11 @@ const playStand = async (req, res) => {
             game.win = 'Player'
         }
 
+        // Respond with ok status and the updated Game & winner
         await game.save()      //save game to database
-       //await gameEnd()        //end the game
+        const message = gameEnd(game)        //determine winner message
+        return res.status(200).json({game, message})
 
-        //respond with good status and the updated Game
-        res.status(200).json(game)
     } catch(error){
         console.error(error)
         res.status(400).json({mssg: 'Unable to play out stand'})
